@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+
+#sitemap_list {
+	background: url(../images/document/bg_vertical_line.png) 6px;
+	padding: 0;
+	margin: 0;
+}
+
+#sitemap_list li {
+	font-size: medium;
+	text-indent: 0;
+	padding: 0;
+	margin: 0 0 20px;
+	list-style-type: none;
+	line-height: 1.5;
+}
+
+#sitemap_list li li {
+	background: none;
+	font-size: small;
+	margin: 0 0 0 0;
+	padding: 0 0 0 30px;
+	border-left: none;
+}
+
+#sitemap_list li li li {
+	font-size: 95%;
+	margin: 0;
+}
+
+#sitemap_list li a {
+	background: url(../images/document/ico_post.png) no-repeat left center;
+	padding: 5px 7px 5px 18px;
+	text-decoration: none;
+	display: block;
+}
+
+#sitemap_list ul {
+	background: url(../images/document/ico_folder.png) no-repeat 0 0.7em;
+	padding: 0;
+	margin: 0;
+}
