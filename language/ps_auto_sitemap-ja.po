@@ -1,0 +1,199 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PS Auto Sitemap\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-12-26 14:24+0900\n"
+"PO-Revision-Date: \n"
+"Last-Translator: hitoshi omagari\n"
+"Language-Team: Prime Strategy Co.,Ltd. <system@prime-strategy.co.jp>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Japanese\n"
+"X-Poedit-Country: JAPAN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: R:\\wp_test\\DocumentRoot\\wp-content\\plugins\\\n"
+"X-Poedit-SearchPath-0: ps_auto_sitemap\n"
+
+#: ps_auto_sitemap.php:16
+msgid "Simple"
+msgstr "シンプル"
+
+#: ps_auto_sitemap.php:17
+msgid "Simple2"
+msgstr "シンプル２"
+
+#: ps_auto_sitemap.php:18
+msgid "Checker"
+msgstr "チェックリスト"
+
+#: ps_auto_sitemap.php:19
+msgid "Fluorescent marker"
+msgstr "蛍光ペン"
+
+#: ps_auto_sitemap.php:20
+msgid "Document tree"
+msgstr "ドキュメントツリー"
+
+#: ps_auto_sitemap.php:21
+msgid "Label"
+msgstr "付箋"
+
+#: ps_auto_sitemap.php:22
+msgid "Music"
+msgstr "音譜"
+
+#: ps_auto_sitemap.php:23
+msgid "Arrows"
+msgstr "矢印"
+
+#: ps_auto_sitemap.php:24
+msgid "Business"
+msgstr "ビジネス"
+
+#: ps_auto_sitemap.php:25
+msgid "Index"
+msgstr "索引"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:259
+msgid "The settings of PS Auto Sitemap has changed successfully."
+msgstr "PS Auto Sitemap の設定を変更いたしました。"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:263
+msgid "The settings has not been changed. There were no changes or failed to update the data base."
+msgstr "設定は変更されていません。変更がなかったか、データベースのアップデートに失敗いたしました。"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:270
+msgid "Display post tree"
+msgstr "投稿リストの出力"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:271
+#: ps_auto_sitemap/ps_auto_sitemap.php:275
+msgid "Display"
+msgstr "出力する"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:274
+msgid "Display page tree"
+msgstr "ページリストの出力"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:278
+msgid "PostID of the sitemap"
+msgstr "サイトマップを表示する記事"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:280
+msgid "* Please input display sitemap post's ID."
+msgstr "* サイトマップを表示する記事のIDを入力してください。"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:284
+msgid "Depth level"
+msgstr "出力階層制限"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:287
+msgid "no limit"
+msgstr "制限なし"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:288
+msgid "level 1"
+msgstr "第1階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:289
+msgid "level 2"
+msgstr "第2階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:290
+msgid "level 3"
+msgstr "第3階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:291
+msgid "level 4"
+msgstr "第4階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:292
+msgid "level 5"
+msgstr "第5階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:293
+msgid "level 6"
+msgstr "第6階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:294
+msgid "level 7"
+msgstr "第7階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:295
+msgid "level 8"
+msgstr "第8階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:296
+msgid "level 9"
+msgstr "第9階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:297
+msgid "level 10"
+msgstr "第10階層"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:302
+msgid "Display first"
+msgstr "先に出力するリスト"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:305
+msgid "Post"
+msgstr "投稿"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:307
+msgid "Page"
+msgstr "ページ"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:311
+msgid "Excluded categories"
+msgstr "除外カテゴリ"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:313
+msgid "* Please input category ID of exclude categories. (Separated by comma)"
+msgstr "* 出力しないカテゴリのIDを入力してください。（複数の場合はカンマ区切り）"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:317
+msgid "Exclude posts"
+msgstr "除外記事"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:319
+msgid "* Please input post ID of exclude posts. (Separated by comma)"
+msgstr "* 出力しない記事のIDを入力してください。（複数の場合はカンマ区切り）"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:323
+msgid "Select style"
+msgstr "スタイルの変更"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:326
+msgid "no style"
+msgstr "スタイルなし"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:334
+msgid "Hide developper link"
+msgstr "制作者リンクの表示"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:335
+msgid "Hide"
+msgstr "非表示"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:339
+msgid "Save Changes"
+msgstr "変更の保存"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:343
+msgid "Usage"
+msgstr "ご利用方法"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:345
+msgid "Post a page that will use as the sitemap page."
+msgstr "サイトマップを表示させたい記事を作成します。"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:346
+msgid "Insert following code in the content area. (<strong>Use HTML mode</strong>)"
+msgstr "作成した記事のcontent部分に、<strong>HTMLモードで</strong>以下のコードを入力します。"
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:348
+msgid "Define the sitemap's ID at \"<strong>PostID of the sitemap</strong>\" field of the setings."
+msgstr "記事編集画面で記事ID（アドレスバーの &amp;post=nn ）を確認し、『サイトマップを表示する記事』欄に指定します。"
+

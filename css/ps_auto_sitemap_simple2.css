@@ -1,0 +1,39 @@
+@charset "utf-8";
+/* CSS Document */
+
+#sitemap_list {
+	margin: 0;
+	padding: 0;
+}
+
+#sitemap_list li {
+	padding: 0;
+	margin: 1.5em 0;
+	list-style-type: none;
+}
+
+#sitemap_list li ul {
+	margin: 1.5em 0 0 0;
+	padding: 0;
+}
+
+#sitemap_list li li {
+	background: url(../images/simple2/ico_level_2.png) no-repeat 0 0.5em;
+	margin: 0.7em 0 0.7em 30px;
+	padding: 0 0 0 25px;
+}
+
+#sitemap_list li a {
+	background-color: #faf8f2;
+	text-indent: 0;
+	display: block;
+	padding: 3px 5px 2px;
+	border: solid 1px #cacaca;
+}
+
+#sitemap_list li li a {
+	background: none;
+	display: inline;
+	padding: 0;
+	border: none;
+}

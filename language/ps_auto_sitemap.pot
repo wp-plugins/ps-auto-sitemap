@@ -1,0 +1,199 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PS Auto Sitemap\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=\n"
+"Content-Transfer-Encoding: \n"
+"X-Poedit-Language: \n"
+"X-Poedit-Country: \n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-SearchPath-0: \n"
+
+#: ps_auto_sitemap.php:16
+msgid "Simple"
+msgstr ""
+
+#: ps_auto_sitemap.php:17
+msgid "Simple2"
+msgstr ""
+
+#: ps_auto_sitemap.php:18
+msgid "Checker"
+msgstr ""
+
+#: ps_auto_sitemap.php:19
+msgid "Fluorescent marker"
+msgstr ""
+
+#: ps_auto_sitemap.php:20
+msgid "Document tree"
+msgstr ""
+
+#: ps_auto_sitemap.php:21
+msgid "Label"
+msgstr ""
+
+#: ps_auto_sitemap.php:22
+msgid "Music"
+msgstr ""
+
+#: ps_auto_sitemap.php:23
+msgid "Arrows"
+msgstr ""
+
+#: ps_auto_sitemap.php:24
+msgid "Business"
+msgstr ""
+
+#: ps_auto_sitemap.php:25
+msgid "Index"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:259
+msgid "The settings of PS Auto Sitemap has changed successfully."
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:263
+msgid "The settings has not been changed. There were no changes or failed to update the data base."
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:270
+msgid "Display post tree"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:271
+#: ps_auto_sitemap/ps_auto_sitemap.php:275
+msgid "Display"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:274
+msgid "Display page tree"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:278
+msgid "PostID of the sitemap"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:280
+msgid "* Please input display sitemap post's ID."
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:284
+msgid "Depth level"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:287
+msgid "no limit"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:288
+msgid "level 1"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:289
+msgid "level 2"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:290
+msgid "level 3"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:291
+msgid "level 4"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:292
+msgid "level 5"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:293
+msgid "level 6"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:294
+msgid "level 7"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:295
+msgid "level 8"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:296
+msgid "level 9"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:297
+msgid "level 10"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:302
+msgid "Display first"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:305
+msgid "Post"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:307
+msgid "Page"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:311
+msgid "Excluded categories"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:313
+msgid "* Please input category ID of exclude categories. (Separated by comma)"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:317
+msgid "Exclude posts"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:319
+msgid "* Please input post ID of exclude posts. (Separated by comma)"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:323
+msgid "Select style"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:326
+msgid "no style"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:334
+msgid "Hide developper link"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:335
+msgid "Hide"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:339
+msgid "Save Changes"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:343
+msgid "Usage"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:345
+msgid "Post a page that will use as the sitemap page."
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:346
+msgid "Insert following code in the content area. (<strong>Use HTML mode</strong>)"
+msgstr ""
+
+#: ps_auto_sitemap/ps_auto_sitemap.php:348
+msgid "Define the sitemap's ID at \"<strong>PostID of the sitemap</strong>\" field of the setings."
+msgstr ""
+
