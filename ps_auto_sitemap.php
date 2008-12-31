@@ -47,6 +47,8 @@ class ps_auto_sitemap {
 
 	function replace_sitemap_content( $content ) {
 		global $post;
+		
+		$branches = array();
 		$sitemap_option_data = get_option( 'ps_sitemap' );
 
 		if ( $sitemap_option_data['post_tree'] == '1' ) {
@@ -101,7 +103,7 @@ class ps_auto_sitemap {
 			}
 		}
 
-		if ( $branches ) {
+		if ( count( $branches ) ) {
 			foreach( $branches as $foundation => $branch ) {
 				foreach( $branches as $key => $val ) {
 					if ( array_key_exists( $foundation, $val ) ) {
