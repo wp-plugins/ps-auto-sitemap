@@ -101,18 +101,20 @@ class ps_auto_sitemap {
 			}
 		}
 
-		foreach( $branches as $foundation => $branch ) {
-			foreach( $branches as $key => $val ) {
-				if ( array_key_exists( $foundation, $val ) ) {
-					$branches[$key][$foundation] = &$branches[$foundation];
-					break 1;
+		if ( $branches ) {
+			foreach( $branches as $foundation => $branch ) {
+				foreach( $branches as $key => $val ) {
+					if ( array_key_exists( $foundation, $val ) ) {
+						$branches[$key][$foundation] = &$branches[$foundation];
+						break 1;
+					}
 				}
 			}
-		}
-	
-		foreach ( $branches as $foundation => $branch ) {
-			if ( isset( $category_tree[$foundation] ) ) {
-				$category_tree[$foundation] = $branch;
+		
+			foreach ( $branches as $foundation => $branch ) {
+				if ( isset( $category_tree[$foundation] ) ) {
+					$category_tree[$foundation] = $branch;
+				}
 			}
 		}
 		return $category_tree;
