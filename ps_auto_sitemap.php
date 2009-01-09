@@ -124,9 +124,14 @@ class ps_auto_sitemap {
 
 
 	function make_post_list( $ex_post_ids, $category_tree, $depth, $cur_depth = 1 , $child = true ) {
+		global $wpdb;
+
 		if ( ! is_array( $category_tree ) ) { return; }
 		
 		$ps_sitemap_query = new WP_query();
+		$ex_post_ids = preg_replace( '/[^\d,]/', '', $ex_post_ids );
+		$ex_post_ids = trim( $ex_post_ids, ',' );
+		$ex_post_ids = "'" . str_replace( ',', "','", $ex_post_ids ) . "'";
 
 		if ( $child ) {
 			$post_list = "\n<ul>\n";
@@ -137,17 +142,28 @@ class ps_auto_sitemap {
 		foreach( $category_tree as $cat_id => $category ) {
 			$post_list .= '<li class="cat-item cat-item-' . $cat_id . '"><a href="' . get_category_link( $cat_id ). '" title="' . get_the_category_by_ID( $cat_id ) . '">' . wp_specialchars( get_the_category_by_ID( $cat_id ) ) . '</a>';
 
-			$query = array(
-				'showposts' => '-1',
-				'category__in' => array( $cat_id ),
-				'post__not_in' => explode( ',', $ex_post_ids )
-			);
 			if ( ! $depth || $depth > $cur_depth ) {
-				$category_posts = $ps_sitemap_query->query( $query );
+				$query = "
+SELECT	`posts`.`ID`,
+		`posts`.`post_title`
+FROM	$wpdb->posts as `posts`
+INNER JOIN	$wpdb->term_relationships as `relation`
+ON		( `posts`.`ID` = `relation`.`object_id` )
+INNER JOIN $wpdb->term_taxonomy as `taxonomy`
+ON		(`relation`.`term_taxonomy_id` = `taxonomy`.`term_taxonomy_id` )
+INNER JOIN $wpdb->terms as `terms`
+ON		( `taxonomy`.`term_id` = `terms`.`term_id` )
+WHERE	`posts`.`post_status` = 'publish'
+AND		`posts`.`post_type` = 'post'
+AND		`posts`.`ID` NOT IN ( $ex_post_ids )
+AND		`terms`.`term_id` = '$cat_id'
+ORDER BY	`posts`.`post_date`
+DESC";
+				$category_posts = $wpdb->get_results( $query, ARRAY_A );
 				if ( $category_posts ) {
 					$post_list .= "\n<ul>\n";
 					foreach( $category_posts as $post ) {
-						$post_list .= "\t" . '<li class="post-item post-item-' . $post->ID . '"><a href="' . get_permalink( $post->ID ) . '" title="' . $post->post_title . '">' . wp_specialchars( $post->post_title ) . "</a></li>\n";
+						$post_list .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . attribute_escape( $post['post_title'] ) . '">' . wp_specialchars( $post['post_title'] ) . "</a></li>\n";
 					}
 					if ( ! count( $category ) ) {
 						$post_list .= "</ul>\n";
@@ -165,7 +181,6 @@ class ps_auto_sitemap {
 		if ( $child ) {
 			$post_list .= "</ul>\n";
 		}
-		unset( $ps_sitemap_query );
 		return $post_list;
 	}
 

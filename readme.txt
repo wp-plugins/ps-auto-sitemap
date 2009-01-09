@@ -3,7 +3,7 @@ Contributors: jim912
 Tags: sitemap, post, page, seo, cms
 Requires at least: 2.3.1
 Tested up to: 2.7
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 
 Auto generator of a customizable and designed sitemap page.
 
@@ -16,8 +16,7 @@ It can change the settings of the display of the lists from administration page,
 
 When you use WordPress as CMS of the Web site, you can expect the **effect of SEO**, **improvement of the usability**, and so on.
 
-Functions of "PS Auto Sitemap":
-
+= Functions of "PS Auto Sitemap": =
 * Display/hide of particular categories and posts. 
 * Display/hide of pages. 
 * Limitation of the depth of the list. 
@@ -26,7 +25,18 @@ Functions of "PS Auto Sitemap":
 * Set the excluded posts or pages from the list. 
 * Select the display style of the site map from five prepared designs (or no style).
 
-
+= Version history =
+* **1.0.7**
+ * reduce using memory.
+* **1.0.6**
+ * Bugfix : foreach error in case of all categories set as top level
+* **1.0.5**
+ * Added 5 preset styles( Label, Music, Arrows, Business, Index )
+ * Bugfix : wrong URL of css file in windows server and windows local pc.
+ * some code refactoring
+* **1.0.0**
+ * Public release
+ 
 == Installation ==
 1. Unzip the downloaded package and upload into your WordPress plugins directory.
 If you use WordPress 2.7 or later, you can install from admin page.
