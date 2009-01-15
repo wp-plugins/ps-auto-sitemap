@@ -3,7 +3,7 @@ Contributors: jim912
 Tags: sitemap, post, page, seo, cms
 Requires at least: 2.3.1
 Tested up to: 2.7
-Stable tag: 1.0.7
+Stable tag: trunk
 
 Auto generator of a customizable and designed sitemap page.
 
