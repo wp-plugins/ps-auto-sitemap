@@ -1,20 +1,19 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: PS Auto Sitemap\n"
+"Project-Id-Version: PS Auto Sitemap 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: \n"
+"POT-Creation-Date: 2009-01-19 15:45+0900\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=\n"
-"Content-Transfer-Encoding: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: \n"
 "X-Poedit-Country: \n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
-"X-Poedit-Basepath: \n"
-"X-Poedit-SearchPath-0: \n"
+"X-Poedit-SearchPath-0: ps_auto_sitemap\n"
 
 #: ps_auto_sitemap.php:16
 msgid "Simple"
@@ -56,144 +55,165 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:259
+#: ps_auto_sitemap.php:26
+msgid "Urban"
+msgstr ""
+
+#: ps_auto_sitemap.php:27
+msgid "Under score"
+msgstr ""
+
+#: ps-auto-sitemap/ps_auto_sitemap.php:312
 msgid "The settings of PS Auto Sitemap has changed successfully."
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:263
+#: ps-auto-sitemap/ps_auto_sitemap.php:316
 msgid "The settings has not been changed. There were no changes or failed to update the data base."
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:270
-msgid "Display post tree"
+#: ps-auto-sitemap/ps_auto_sitemap.php:321
+msgid "PS Auto Sitemap isn't using cache system currently, because cache or parent directorty isn't writable. Please check owner and permission of upload directory."
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:271
-#: ps_auto_sitemap/ps_auto_sitemap.php:275
+#: ps-auto-sitemap/ps_auto_sitemap.php:329
+msgid "Display home list"
+msgstr ""
+
+#: ps-auto-sitemap/ps_auto_sitemap.php:330
+#: ps-auto-sitemap/ps_auto_sitemap.php:334
+#: ps-auto-sitemap/ps_auto_sitemap.php:338
 msgid "Display"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:274
+#: ps-auto-sitemap/ps_auto_sitemap.php:333
+msgid "Display post tree"
+msgstr ""
+
+#: ps-auto-sitemap/ps_auto_sitemap.php:337
 msgid "Display page tree"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:278
+#: ps-auto-sitemap/ps_auto_sitemap.php:341
 msgid "PostID of the sitemap"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:280
+#: ps-auto-sitemap/ps_auto_sitemap.php:343
 msgid "* Please input display sitemap post's ID."
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:284
+#: ps-auto-sitemap/ps_auto_sitemap.php:347
 msgid "Depth level"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:287
+#: ps-auto-sitemap/ps_auto_sitemap.php:350
 msgid "no limit"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:288
+#: ps_auto_sitemap/ps_auto_sitemap.php:351
 msgid "level 1"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:289
+#: ps_auto_sitemap/ps_auto_sitemap.php:352
 msgid "level 2"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:290
+#: ps_auto_sitemap/ps_auto_sitemap.php:353
 msgid "level 3"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:291
+#: ps_auto_sitemap/ps_auto_sitemap.php:354
 msgid "level 4"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:292
+#: ps_auto_sitemap/ps_auto_sitemap.php:355
 msgid "level 5"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:293
+#: ps_auto_sitemap/ps_auto_sitemap.php:356
 msgid "level 6"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:294
+#: ps_auto_sitemap/ps_auto_sitemap.php:357
 msgid "level 7"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:295
+#: ps_auto_sitemap/ps_auto_sitemap.php:358
 msgid "level 8"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:296
+#: ps_auto_sitemap/ps_auto_sitemap.php:359
 msgid "level 9"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:297
+#: ps_auto_sitemap/ps_auto_sitemap.php:360
 msgid "level 10"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:302
+#: ps-auto-sitemap/ps_auto_sitemap.php:365
 msgid "Display first"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:305
+#: ps-auto-sitemap/ps_auto_sitemap.php:368
 msgid "Post"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:307
+#: ps-auto-sitemap/ps_auto_sitemap.php:370
 msgid "Page"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:311
+#: ps-auto-sitemap/ps_auto_sitemap.php:374
 msgid "Excluded categories"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:313
+#: ps-auto-sitemap/ps_auto_sitemap.php:376
 msgid "* Please input category ID of exclude categories. (Separated by comma)"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:317
+#: ps-auto-sitemap/ps_auto_sitemap.php:380
 msgid "Exclude posts"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:319
+#: ps-auto-sitemap/ps_auto_sitemap.php:382
 msgid "* Please input post ID of exclude posts. (Separated by comma)"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:323
+#: ps-auto-sitemap/ps_auto_sitemap.php:386
 msgid "Select style"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:326
+#: ps-auto-sitemap/ps_auto_sitemap.php:389
 msgid "no style"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:334
+#: ps-auto-sitemap/ps_auto_sitemap.php:397
+msgid "Using cache"
+msgstr ""
+
+#: ps-auto-sitemap/ps_auto_sitemap.php:398
+msgid "use"
+msgstr ""
+
+#: ps-auto-sitemap/ps_auto_sitemap.php:401
 msgid "Hide developper link"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:335
+#: ps-auto-sitemap/ps_auto_sitemap.php:402
 msgid "Hide"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:339
-msgid "Save Changes"
-msgstr ""
-
-#: ps_auto_sitemap/ps_auto_sitemap.php:343
+#: ps-auto-sitemap/ps_auto_sitemap.php:410
 msgid "Usage"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:345
+#: ps-auto-sitemap/ps_auto_sitemap.php:412
 msgid "Post a page that will use as the sitemap page."
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:346
+#: ps-auto-sitemap/ps_auto_sitemap.php:413
 msgid "Insert following code in the content area. (<strong>Use HTML mode</strong>)"
 msgstr ""
 
-#: ps_auto_sitemap/ps_auto_sitemap.php:348
+#: ps-auto-sitemap/ps_auto_sitemap.php:415
 msgid "Define the sitemap's ID at \"<strong>PostID of the sitemap</strong>\" field of the setings."
 msgstr ""
 

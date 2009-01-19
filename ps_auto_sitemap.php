@@ -4,7 +4,7 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.0.5
+Version: 1.1.0
 Author URI: http://www.web-strategy.jp/
 */
 
@@ -22,8 +22,12 @@ class ps_auto_sitemap {
 		'music' => 'Music',
 		'arrows' => 'Arrows',
 		'business' => 'Business',
-		'index' => 'Index'
+		'index' => 'Index',
+		'urban' => 'Urban',
+		'under_score' => 'Under score'
 	);
+	
+	var $option;
 
 
 	function ps_auto_sitemap() {
@@ -34,6 +38,10 @@ class ps_auto_sitemap {
 	function __construct() {
 		global $wp_version;
 		$this->wp_version = $wp_version;
+		
+		add_action( 'init', array( &$this, 'ps_auto_sitemap_init') );
+		add_action( 'publish_post', array( &$this, 'delete_sitemap_cache') );
+		add_action( 'publish_page', array( &$this, 'delete_sitemap_cache') );
 		add_filter( 'the_content', array( &$this, 'replace_sitemap_content') );
 		add_action( 'admin_menu', array( &$this, 'add_sitemap_setting_menu') );
 		add_action( 'wp_head', array( &$this, 'print_sitemap_prepare_css' ) );
@@ -43,54 +51,82 @@ class ps_auto_sitemap {
 			add_action( 'admin_head', array( &$this, 'print_sitemap_admin_css' ) );
 		}
 	}
+	
+	
+	function ps_auto_sitemap_init() {
+		$this->option = get_option( 'ps_sitemap' );
+		if ( ! $this->option ) {
+			$this->set_default_options();
+			$this->option = get_option( 'ps_sitemap' );
+		}
+	}
 
 
 	function replace_sitemap_content( $content ) {
 		global $post;
-		$sitemap_option_data = get_option( 'ps_sitemap' );
-
-		if ( $sitemap_option_data['post_tree'] == '1' ) {
-			$category_tree = $this->make_category_tree( $sitemap_option_data['ex_cat_ids'] );
-			$post_list = $this->make_post_list( $sitemap_option_data['ex_post_ids'], $category_tree, $sitemap_option_data['disp_level'], 1, false );
-		} else {
-			$post_list = '';
-		}
-
-		if ( $sitemap_option_data['post_id'] && $post->ID == $sitemap_option_data['post_id'] ) {
-			$page_on_front = get_option( 'page_on_front' );
-			$ex_pages = $sitemap_option_data['ex_post_ids'];
-			if ( get_option( 'show_on_front') == 'page' && $page_on_front ) {
-				if ( $ex_pages ) {
-					$ex_pages .= ',' . $page_on_front;
-				} else {
-					$ex_pages = $page_on_front;
-				}
-			}
-			$sitemap_content = "<ul id=\"sitemap_list\" class=\"sitemap_disp_level_" . $sitemap_option_data['disp_level'] . "\">\n";
-			$sitemap_content .= '<li class="home-item"><a href="' . get_bloginfo( 'url' ) . '" title="' . get_bloginfo( 'name' ) . '">' . wp_specialchars( get_bloginfo( 'name' ) ) . "</a></li>\n";
-			if ( $sitemap_option_data['disp_first'] == 'post' ) {
-				$sitemap_content .= $post_list;
-				if ( $sitemap_option_data['page_tree'] == '1' ) {
-					$sitemap_content .= wp_list_pages( 'title_li=&echo=0&exclude=' . $ex_pages . '&depth=' . $sitemap_option_data['disp_level'] );
-				}
+		
+		if ( $this->option['post_id'] && $post->ID == $this->option['post_id'] ) {
+			if ( $cache_dir = $this->check_cache_dir() && file_exists( $cache_dir . '/site_map_cache.html' ) && $this->option['use_cache'] ) {
+				$sitemap_content = file_get_contents( $cache_dir . '/site_map_cache.html' );
 			} else {
-				if ( $sitemap_option_data['page_tree'] == '1' ) {
-					$sitemap_content .= wp_list_pages( 'title_li=&echo=0&exclude=' . $ex_pages . '&depth=' . $sitemap_option_data['disp_level'] );
-				}
-				$sitemap_content .= $post_list;
-			}
-			
-			$sitemap_content .= "</ul>\n";
-			if ( ! $sitemap_option_data['suppress_link'] ) {
-				$sitemap_content .= '<address style="text-align: right; font-size: x-small;">Powered by <a href="http://www.web-strategy.jp/" target="_blank">Prime Strategy Co.,LTD.</a></address>' . "\n";
-			}
+				$sitemap_content = $this->create_sitemap_content();
+			}		
 			$content = preg_replace( '/(<p><!-- SITEMAP CONTENT REPLACE POINT --><\/p>|<!-- SITEMAP CONTENT REPLACE POINT -->)/', $sitemap_content, $content, 1 );
 		}
 		return $content;
 	}
 
 
+	function create_sitemap_content() {
+
+		if ( $this->option['post_tree'] == '1' ) {
+			$category_tree = $this->make_category_tree( $this->option['ex_cat_ids'] );
+			$post_list = $this->make_post_list( $this->option['ex_post_ids'], $category_tree, $this->option['disp_level'], 1, false );
+		} else {
+			$post_list = '';
+		}
+
+		$page_on_front = get_option( 'page_on_front' );
+		$ex_pages = $this->option['ex_post_ids'];
+		if ( get_option( 'show_on_front') == 'page' && $page_on_front ) {
+			if ( $ex_pages ) {
+				$ex_pages .= ',' . $page_on_front;
+			} else {
+				$ex_pages = $page_on_front;
+			}
+		}
+		$sitemap_content = "<ul id=\"sitemap_list\" class=\"sitemap_disp_level_" . $this->option['disp_level'] . "\">\n";
+		if ($this->option['home_list'] ) {
+			$sitemap_content .= '<li class="home-item"><a href="' . get_bloginfo( 'url' ) . '" title="' . get_bloginfo( 'name' ) . '">' . wp_specialchars( get_bloginfo( 'name' ) ) . "</a></li>\n";
+		}
+		if ( $this->option['disp_first'] == 'post' ) {
+			$sitemap_content .= $post_list;
+			if ( $this->option['page_tree'] == '1' ) {
+				$sitemap_content .= wp_list_pages( 'title_li=&echo=0&exclude=' . $ex_pages . '&depth=' . $this->option['disp_level'] );
+			}
+		} else {
+			if ( $this->option['page_tree'] == '1' ) {
+				$sitemap_content .= wp_list_pages( 'title_li=&echo=0&exclude=' . $ex_pages . '&depth=' . $this->option['disp_level'] );
+			}
+			$sitemap_content .= $post_list;
+		}
+		
+		$sitemap_content .= "</ul>\n";
+		if ( ! $this->option['suppress_link'] ) {
+			$sitemap_content .= '<address style="text-align: right; font-size: x-small;">Powered by <a href="http://www.web-strategy.jp/" target="_blank">Prime Strategy Co.,LTD.</a></address>' . "\n";
+		}
+		
+		if ( ( $cache_dir = $this->check_cache_dir() ) && $this->option['use_cache'] ) {
+			$this->check_htaccess( $cache_dir );
+			file_put_contents( $cache_dir . '/site_map_cache.html', $sitemap_content );
+		}
+		return $sitemap_content;
+	}
+
+
 	function make_category_tree( $ex_cat_ids ) {
+
+		$branches = array();
 		$categories = get_categories( 'exclude=' . $ex_cat_ids );
 
 		foreach( $categories as $cat ) {
@@ -101,18 +137,20 @@ class ps_auto_sitemap {
 			}
 		}
 
-		foreach( $branches as $foundation => $branch ) {
-			foreach( $branches as $key => $val ) {
-				if ( array_key_exists( $foundation, $val ) ) {
-					$branches[$key][$foundation] = &$branches[$foundation];
-					break 1;
+		if ( count( $branches ) ) {
+			foreach( $branches as $foundation => $branch ) {
+				foreach( $branches as $key => $val ) {
+					if ( array_key_exists( $foundation, $val ) ) {
+						$branches[$key][$foundation] = &$branches[$foundation];
+						break 1;
+					}
 				}
 			}
-		}
-	
-		foreach ( $branches as $foundation => $branch ) {
-			if ( isset( $category_tree[$foundation] ) ) {
-				$category_tree[$foundation] = $branch;
+		
+			foreach ( $branches as $foundation => $branch ) {
+				if ( isset( $category_tree[$foundation] ) ) {
+					$category_tree[$foundation] = $branch;
+				}
 			}
 		}
 		return $category_tree;
@@ -120,9 +158,14 @@ class ps_auto_sitemap {
 
 
 	function make_post_list( $ex_post_ids, $category_tree, $depth, $cur_depth = 1 , $child = true ) {
+		global $wpdb;
+
 		if ( ! is_array( $category_tree ) ) { return; }
 		
 		$ps_sitemap_query = new WP_query();
+		$ex_post_ids = preg_replace( '/[^\d,]/', '', $ex_post_ids );
+		$ex_post_ids = trim( $ex_post_ids, ',' );
+		$ex_post_ids = "'" . str_replace( ',', "','", $ex_post_ids ) . "'";
 
 		if ( $child ) {
 			$post_list = "\n<ul>\n";
@@ -133,17 +176,28 @@ class ps_auto_sitemap {
 		foreach( $category_tree as $cat_id => $category ) {
 			$post_list .= '<li class="cat-item cat-item-' . $cat_id . '"><a href="' . get_category_link( $cat_id ). '" title="' . get_the_category_by_ID( $cat_id ) . '">' . wp_specialchars( get_the_category_by_ID( $cat_id ) ) . '</a>';
 
-			$query = array(
-				'showposts' => '-1',
-				'category__in' => array( $cat_id ),
-				'post__not_in' => explode( ',', $ex_post_ids )
-			);
 			if ( ! $depth || $depth > $cur_depth ) {
-				$category_posts = $ps_sitemap_query->query( $query );
+				$query = "
+SELECT	`posts`.`ID`,
+		`posts`.`post_title`
+FROM	$wpdb->posts as `posts`
+INNER JOIN	$wpdb->term_relationships as `relation`
+ON		( `posts`.`ID` = `relation`.`object_id` )
+INNER JOIN $wpdb->term_taxonomy as `taxonomy`
+ON		(`relation`.`term_taxonomy_id` = `taxonomy`.`term_taxonomy_id` )
+INNER JOIN $wpdb->terms as `terms`
+ON		( `taxonomy`.`term_id` = `terms`.`term_id` )
+WHERE	`posts`.`post_status` = 'publish'
+AND		`posts`.`post_type` = 'post'
+AND		`posts`.`ID` NOT IN ( $ex_post_ids )
+AND		`terms`.`term_id` = '$cat_id'
+GROUP BY	`posts`.`ID`
+ORDER BY	`posts`.`post_date` DESC";
+				$category_posts = $wpdb->get_results( $query, ARRAY_A );
 				if ( $category_posts ) {
 					$post_list .= "\n<ul>\n";
 					foreach( $category_posts as $post ) {
-						$post_list .= "\t" . '<li class="post-item post-item-' . $post->ID . '"><a href="' . get_permalink( $post->ID ) . '" title="' . $post->post_title . '">' . wp_specialchars( $post->post_title ) . "</a></li>\n";
+						$post_list .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . attribute_escape( $post['post_title'] ) . '">' . wp_specialchars( $post['post_title'] ) . "</a></li>\n";
 					}
 					if ( ! count( $category ) ) {
 						$post_list .= "</ul>\n";
@@ -161,7 +215,6 @@ class ps_auto_sitemap {
 		if ( $child ) {
 			$post_list .= "</ul>\n";
 		}
-		unset( $ps_sitemap_query );
 		return $post_list;
 	}
 
@@ -186,20 +239,17 @@ class ps_auto_sitemap {
 		if ( file_exists( $lang_file ) ) {
 			load_textdomain( 'ps_auto_sitemap', $lang_file );
 		}
-		$sitemap_option_data = get_option( 'ps_sitemap' );
-		if ( ! $sitemap_option_data ) {
-			$this->set_default_options();
-			$sitemap_option_data = get_option( 'ps_sitemap' );
-		}
 
 		if( $_POST['_wpnonce'] ) {
 			check_admin_referer();
-			$sitemap_option_keys = array( 'post_tree', 'page_tree', 'post_id', 'disp_level',  'disp_first', 'ex_cat_ids', 'ex_post_ids', 'prepared_style', 'suppress_link' );
+			$sitemap_option_keys = array( 'home_list', 'post_tree', 'page_tree', 'post_id', 'disp_level',  'disp_first', 'ex_cat_ids', 'ex_post_ids', 'prepared_style', 'use_cache', 'suppress_link' );
 			
 			foreach ( $sitemap_option_keys as $key ) {
 				switch ( $key ) {
+				case 'home_list' :
 				case 'post_tree' :
 				case 'page_tree' :
+				case 'use_cache' :
 				case 'suppress_link' :
 					if ( ! $_POST['ps_sitemap_' . $key] ) {
 						$_POST['ps_sitemap_' . $key] = '';
@@ -246,9 +296,12 @@ class ps_auto_sitemap {
 					break;
 				default :
 				}
-				$sitemap_option_data[$key] = $_POST['ps_sitemap_' . $key];
+				$this->option[$key] = $_POST['ps_sitemap_' . $key];
 			}
-			$ret = update_option( 'ps_sitemap', $sitemap_option_data );
+			$ret = update_option( 'ps_sitemap', $this->option );
+			if ( $ret ) {
+				$this->delete_sitemap_cache();
+			}
 		}
 		?>
 		<div class=wrap>
@@ -262,21 +315,31 @@ class ps_auto_sitemap {
 			<div id="notice" class="error">
 				<p><?php _e('The settings has not been changed. There were no changes or failed to update the data base.', 'ps_auto_sitemap' );?></p>
 			</div>
+			<?php }
+					if ( ( ! $this->check_cache_dir() ) && $this->option['use_cache'] ) {	?>
+			<div id="notice" class="error">
+				<p><?php _e('PS Auto Sitemap isn\'t using cache system currently, because cache or parent directorty isn\'t writable. Please check owner and permission of upload directory.', 'ps_auto_sitemap' );?></p>
+			</div>
+
 			<?php } ?>
 			<form method="post" action="">
 				<?php wp_nonce_field(); ?>
 				<table class="form-table">
 					<tr>
+						<th><?php _e( 'Display home list', 'ps_auto_sitemap' ); ?></th>
+						<td><input type="checkbox" name="ps_sitemap_home_list" id="ps_sitemap_home_list" value="1"<?php if ( $this->option['home_list'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_home_list"><?php _e( 'Display', 'ps_auto_sitemap' ); ?></label></td>
+					</tr>
+					<tr>
 						<th><?php _e( 'Display post tree', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="checkbox" name="ps_sitemap_post_tree" id="ps_sitemap_post_tree" value="1"<?php if ( $sitemap_option_data['post_tree'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_post_tree"><?php _e( 'Display', 'ps_auto_sitemap' ); ?></label></td>
+						<td><input type="checkbox" name="ps_sitemap_post_tree" id="ps_sitemap_post_tree" value="1"<?php if ( $this->option['post_tree'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_post_tree"><?php _e( 'Display', 'ps_auto_sitemap' ); ?></label></td>
 					</tr>
 					<tr>
 						<th><?php _e( 'Display page tree', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="checkbox" name="ps_sitemap_page_tree" id="ps_sitemap_page_tree" value="1"<?php if ( $sitemap_option_data['page_tree'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_page_tree"><?php _e( 'Display', 'ps_auto_sitemap' ); ?></label></td>
+						<td><input type="checkbox" name="ps_sitemap_page_tree" id="ps_sitemap_page_tree" value="1"<?php if ( $this->option['page_tree'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_page_tree"><?php _e( 'Display', 'ps_auto_sitemap' ); ?></label></td>
 					</tr>
 					<tr>
 						<th><?php _e( 'PostID of the sitemap', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="text" name="ps_sitemap_post_id" id="ps_sitemap_post_id" value="<?php echo $sitemap_option_data['post_id']; ?>" ><br />
+						<td><input type="text" name="ps_sitemap_post_id" id="ps_sitemap_post_id" value="<?php echo $this->option['post_id']; ?>" ><br />
 						<?php _e( '* Please input display sitemap post\'s ID.', 'ps_auto_sitemap' ); ?>
 						</td>
 					</tr>
@@ -284,38 +347,38 @@ class ps_auto_sitemap {
 						<th><?php _e( 'Depth level', 'ps_auto_sitemap' ); ?></th>
 						<td>
 							<select name="ps_sitemap_disp_level" id="ps_sitemap_disp_level">
-								<option value="0"<?php if ( $sitemap_option_data['disp_level'] == '0' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'no limit', 'ps_auto_sitemap' ); ?></option>
-								<option value="1"<?php if ( $sitemap_option_data['disp_level'] == '1' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 1', 'ps_auto_sitemap' ); ?></option>
-								<option value="2"<?php if ( $sitemap_option_data['disp_level'] == '2' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 2', 'ps_auto_sitemap' ); ?></option>
-								<option value="3"<?php if ( $sitemap_option_data['disp_level'] == '3' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 3', 'ps_auto_sitemap' ); ?></option>
-								<option value="4"<?php if ( $sitemap_option_data['disp_level'] == '4' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 4', 'ps_auto_sitemap' ); ?></option>
-								<option value="5"<?php if ( $sitemap_option_data['disp_level'] == '5' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 5', 'ps_auto_sitemap' ); ?></option>
-								<option value="6"<?php if ( $sitemap_option_data['disp_level'] == '6' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 6', 'ps_auto_sitemap' ); ?></option>
-								<option value="7"<?php if ( $sitemap_option_data['disp_level'] == '7' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 7', 'ps_auto_sitemap' ); ?></option>
-								<option value="8"<?php if ( $sitemap_option_data['disp_level'] == '8' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 8', 'ps_auto_sitemap' ); ?></option>
-								<option value="9"<?php if ( $sitemap_option_data['disp_level'] == '9' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 9', 'ps_auto_sitemap' ); ?></option>
-								<option value="10"<?php if ( $sitemap_option_data['disp_level'] == '10' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 10', 'ps_auto_sitemap' ); ?></option>
+								<option value="0"<?php if ( $this->option['disp_level'] == '0' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'no limit', 'ps_auto_sitemap' ); ?></option>
+								<option value="1"<?php if ( $this->option['disp_level'] == '1' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 1', 'ps_auto_sitemap' ); ?></option>
+								<option value="2"<?php if ( $this->option['disp_level'] == '2' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 2', 'ps_auto_sitemap' ); ?></option>
+								<option value="3"<?php if ( $this->option['disp_level'] == '3' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 3', 'ps_auto_sitemap' ); ?></option>
+								<option value="4"<?php if ( $this->option['disp_level'] == '4' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 4', 'ps_auto_sitemap' ); ?></option>
+								<option value="5"<?php if ( $this->option['disp_level'] == '5' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 5', 'ps_auto_sitemap' ); ?></option>
+								<option value="6"<?php if ( $this->option['disp_level'] == '6' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 6', 'ps_auto_sitemap' ); ?></option>
+								<option value="7"<?php if ( $this->option['disp_level'] == '7' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 7', 'ps_auto_sitemap' ); ?></option>
+								<option value="8"<?php if ( $this->option['disp_level'] == '8' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 8', 'ps_auto_sitemap' ); ?></option>
+								<option value="9"<?php if ( $this->option['disp_level'] == '9' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 9', 'ps_auto_sitemap' ); ?></option>
+								<option value="10"<?php if ( $this->option['disp_level'] == '10' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'level 10', 'ps_auto_sitemap' ); ?></option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<th><?php _e( 'Display first', 'ps_auto_sitemap' ); ?></th>
 						<td>
-							<input type="radio" name="ps_sitemap_disp_first" id="ps_sitemap_disp_first_post" value="post"<?php if ( $sitemap_option_data['disp_first'] == 'post' ) : ?> checked="checked"<?php endif; ?> />
+							<input type="radio" name="ps_sitemap_disp_first" id="ps_sitemap_disp_first_post" value="post"<?php if ( $this->option['disp_first'] == 'post' ) : ?> checked="checked"<?php endif; ?> />
 							<label for="ps_sitemap_disp_first_post"><?php _e( 'Post', 'ps_auto_sitemap' ); ?></label>
-							<input type="radio" name="ps_sitemap_disp_first" id="ps_sitemap_disp_first_page" value="page"<?php if ( $sitemap_option_data['disp_first'] == 'page' ) : ?> checked="checked"<?php endif; ?> />
+							<input type="radio" name="ps_sitemap_disp_first" id="ps_sitemap_disp_first_page" value="page"<?php if ( $this->option['disp_first'] == 'page' ) : ?> checked="checked"<?php endif; ?> />
 							<label for="ps_sitemap_disp_first_page"><?php _e( 'Page', 'ps_auto_sitemap' ); ?></label>
 						</td>
 					</tr>
 					<tr>
 						<th><?php _e( 'Excluded categories', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="text" name="ps_sitemap_ex_cat_ids" id="ps_sitemap_ex_cat_ids" value="<?php echo $sitemap_option_data['ex_cat_ids']; ?>" ><br />
+						<td><input type="text" name="ps_sitemap_ex_cat_ids" id="ps_sitemap_ex_cat_ids" value="<?php echo $this->option['ex_cat_ids']; ?>" ><br />
 						<?php _e( '* Please input category ID of exclude categories. (Separated by comma)', 'ps_auto_sitemap' ); ?>
 						</td>
 					</tr>
 					<tr>
 						<th><?php _e( 'Exclude posts', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="text" name="ps_sitemap_ex_post_ids" id="ps_sitemap_ex_post_ids" value="<?php echo $sitemap_option_data['ex_post_ids']; ?>" ><br />
+						<td><input type="text" name="ps_sitemap_ex_post_ids" id="ps_sitemap_ex_post_ids" value="<?php echo $this->option['ex_post_ids']; ?>" ><br />
 						<?php _e( '* Please input post ID of exclude posts. (Separated by comma)', 'ps_auto_sitemap' ); ?>
 						</td>
 					</tr>
@@ -323,20 +386,24 @@ class ps_auto_sitemap {
 						<th><?php _e( 'Select style', 'ps_auto_sitemap' ); ?></th>
 						<td>
 							<select name="ps_sitemap_prepared_style" id="ps_sitemap_prepared_style">
-								<option value=""<?php if ( $sitemap_option_data['prepared_style'] == '' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'no style', 'ps_auto_sitemap' ); ?></option>
+								<option value=""<?php if ( $this->option['prepared_style'] == '' ) : ?> selected="selected"<?php endif; ?>><?php _e( 'no style', 'ps_auto_sitemap' ); ?></option>
 <?php foreach ( $this->sitemap_prepared_styles as $style_code => $style_name ) : ?>
-								<option value="<?php echo $style_code ?>"<?php if ( $sitemap_option_data['prepared_style'] == $style_code ) : ?> selected="selected"<?php endif; ?>><?php _e( $style_name, 'ps_auto_sitemap' ); ?></option>
+								<option value="<?php echo $style_code ?>"<?php if ( $this->option['prepared_style'] == $style_code ) : ?> selected="selected"<?php endif; ?>><?php _e( $style_name, 'ps_auto_sitemap' ); ?></option>
 <?php endforeach; ?>
 							</select>
 						</td>
 					</tr>
 					<tr>
+						<th><?php _e( 'Using cache', 'ps_auto_sitemap' ); ?></th>
+						<td><input type="checkbox" name="ps_sitemap_use_cache" id="ps_sitemap_use_cache" value="1"<?php if ( $this->option['use_cache'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_use_cache"><?php _e( 'use', 'ps_auto_sitemap' ); ?></label></td>
+					</tr>
+					<tr>
 						<th><?php _e( 'Hide developper link', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="checkbox" name="ps_sitemap_suppress_link" id="ps_sitemap_suppress_link" value="1"<?php if ( $sitemap_option_data['suppress_link'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_suppress_link"><?php _e( 'Hide', 'ps_auto_sitemap' ); ?></label></td>
+						<td><input type="checkbox" name="ps_sitemap_suppress_link" id="ps_sitemap_suppress_link" value="1"<?php if ( $this->option['suppress_link'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_suppress_link"><?php _e( 'Hide', 'ps_auto_sitemap' ); ?></label></td>
 					</tr>
 				</table>
 				<div class="ps_sitemap_submit_buttons">
-					<input type="submit" name="ps_sitemap_submit" class="button-primary" value="<?php _e( 'Save Changes', 'ps_auto_sitemap' ); ?>" />
+					<input type="submit" name="ps_sitemap_submit" class="button-primary" value="<?php _e( 'Save Changes' ); ?>" />
 				</div>
 			</form>
 			<div class="ps_sitemap_installation">
@@ -368,12 +435,12 @@ class ps_auto_sitemap {
 	function print_sitemap_prepare_css() {
 		if ( is_singular() ) {
 			global $post;
-			$sitemap_option_data = get_option( 'ps_sitemap' );
-			if( $post->ID == $sitemap_option_data['post_id'] && $sitemap_option_data['prepared_style'] != '' ) {
+			$option = get_option( 'ps_sitemap' );
+			if( $post->ID == $this->option['post_id'] && $this->option['prepared_style'] != '' ) {
 				if ( defined( 'WP_PLUGIN_URL' ) ) {
-					echo '<link rel="stylesheet" href="' . WP_PLUGIN_URL . str_replace( str_replace( '\\', '/', WP_PLUGIN_DIR ), '', str_replace( '\\', '/', dirname( __file__ ) ) ) . '/css/ps_auto_sitemap_' . $sitemap_option_data['prepared_style'] . '.css" type="text/css" media="all" />' . "\n";
+					echo '<link rel="stylesheet" href="' . WP_PLUGIN_URL . str_replace( str_replace( '\\', '/', WP_PLUGIN_DIR ), '', str_replace( '\\', '/', dirname( __file__ ) ) ) . '/css/ps_auto_sitemap_' . $this->option['prepared_style'] . '.css" type="text/css" media="all" />' . "\n";
 				} else {
-					echo '<link rel="stylesheet" href="' . get_option('siteurl') . '/' . str_replace( ABSPATH, '', dirname( __file__ ) ) . '/css/ps_auto_sitemap_' . $sitemap_option_data['prepared_style'] . '.css" type="text/css" media="all" />' . "\n";
+					echo '<link rel="stylesheet" href="' . get_option('siteurl') . '/' . str_replace( ABSPATH, '', dirname( __file__ ) ) . '/css/ps_auto_sitemap_' . $this->option['prepared_style'] . '.css" type="text/css" media="all" />' . "\n";
 				}
 			}
 		}
@@ -402,15 +469,59 @@ class ps_auto_sitemap {
 
 
 	function set_default_options() {
-		$sitemap_option_data['post_tree'] = '1';
-		$sitemap_option_data['page_tree'] = '1';
-		$sitemap_option_data['post_id'] = '';
-		$sitemap_option_data['disp_level'] = '0';
-		$sitemap_option_data['disp_first'] = 'post';
-		$sitemap_option_data['ex_cat_ids'] = '';
-		$sitemap_option_data['ex_post_id'] = '';
-		$sitemap_option_data['prepared_style'] = '';
-		$sitemap_option_data['suppress_link'] = '0';
-		update_option( 'ps_sitemap', $sitemap_option_data );
+		$option = array(
+			'home_list' => '1',
+			'post_tree' => '1',
+			'page_tree' => '1',
+			'post_id' => '',
+			'disp_level' => '0',
+			'disp_first' => 'post',
+			'ex_cat_ids' => '',
+			'ex_post_id' => '',
+			'prepared_style' => '',
+			'use_cache' => '1',
+			'suppress_link' => '' );
+
+		update_option( 'ps_sitemap', $option );
 	}
+	
+	
+	function check_cache_dir() {
+		$uploads = wp_upload_dir();
+
+		if ( $uploads['error'] !== false ) { return false; }
+
+		$cache_dir = $uploads['basedir'] . '/ps_auto_sitemap';
+		if ( is_writable( $uploads['basedir'] ) ) {
+			if ( file_exists( $cache_dir ) ) {
+				if ( is_writable( $cache_dir ) ) {
+					return $cache_dir;
+				}
+			} else {
+				if( mkdir( $cache_dir ) ) {
+					return $cache_dir;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	function delete_sitemap_cache() {
+		$uploads = wp_upload_dir();
+		if ( $uploads['error'] !== false ) { return false; }
+		
+		$cache_file = $uploads['basedir'] . '/ps_auto_sitemap/site_map_cache.html';
+		if ( file_exists( $cache_file ) ) {
+			unlink( $cache_file );
+		}
+	}
+	
+	
+	function check_htaccess( $cache_dir ) {
+		if ( file_exists( $cache_dir . '/.htaccess' ) ) { return; }
+		file_put_contents( $cache_dir . '/.htaccess', "order deny,allow\ndeny from all" );
+	}
+	
+	
 }
