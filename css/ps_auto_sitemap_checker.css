@@ -60,3 +60,18 @@
 	padding: 0;
 	margin: 0;
 }
+
+#sitemap_list .posts_in_category {
+	position: absolute;
+	padding-left: 10px;
+}
+
+#sitemap_list li .posts_in_category a {
+	background: url(../images/checker/ico_post_list.png) no-repeat center;
+	text-indent: -9999px;
+	display: block;
+	width: 1.2em;
+	height: 1.2em;
+	border: solid 1px #ccc;
+	padding: 0;
+}

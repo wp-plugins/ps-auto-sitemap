@@ -2,7 +2,7 @@
 Contributors: jim912
 Tags: sitemap, post, page, seo, cms
 Requires at least: 2.3.1
-Tested up to: 2.7
+Tested up to: 2.7.1
 Stable tag: trunk
 
 Auto generator of a customizable and designed sitemap page.
@@ -17,33 +17,26 @@ It can change the settings of the display of the lists from administration page,
 When you use WordPress as CMS of the Web site, you can expect the **effect of SEO**, **improvement of the usability**, and so on.
 
 = Functions of "PS Auto Sitemap": =
-* Display/hide of particular home. 
-* Display/hide of particular categories and posts. 
-* Display/hide of pages. 
-* Limitation of the depth of the list. 
+* Display/hide of particular home.
+* Display/hide of particular categories and posts.
+* Display/hide of pages.
+* Limitation of the depth of the list.
 * Set the display order of the page list and the post list.
-* Set the excluded categories from the list. 
-* Set the excluded posts and pages from the list. 
+* new function : Combine/Divide category & post
+* Set the excluded categories from the list.
+* Set the excluded posts and pages from the list.
 * Select the display style of the site map from 12 prepared designs (or no style).
 * Use or not caching sitemap content.
 
-= Version history =
-* **1.1.0**
- * bug fix : post lists are displayed double in case of setting tags.
- * new function : Display/Hide home list
- * new function : caching sitemap content
- * add 2 sitemap styles.(optimised for dark backgroud color)
-* **1.0.7**
- * reduce using memory.
-* **1.0.6**
- * Bugfix : foreach error in case of all categories set as top level
-* **1.0.5**
- * Added 5 preset styles( Label, Music, Arrows, Business, Index )
- * Bugfix : wrong URL of css file in windows server and windows local pc.
- * some code refactoring
-* **1.0.0**
- * Public release
+= Latest change =
+* **1.1.1**
+ * new function : Combine/Divide category & post
+ * add 1 sitemap style.(created by Alejandro)
+ * add spanish language file(created by Alejandro)
+ * refactoring caching logic
  
+ Change log
+
 == Installation ==
 1. Unzip the downloaded package and upload into your WordPress plugins directory.
 If you use WordPress 2.7 or later, you can install from admin page.
@@ -76,4 +69,8 @@ Or, if you tell us the theme and your selected style, we might help you.
 "[CMS service with WordPress](http://www.web-strategy.jp/ "CMS service with WordPress")" provides you service that uses WordPress as a CMS.
 
 == Special Thanks ==
-Translation:[dacelo](http://www.dacelo.info/blog/ "Translation")
+Translation:
+* **English** [dacelo](http://www.dacelo.info/blog/ "Translation")
+* **Spanish** [Alejandro](http://www.yovivoenvigo.com/ "Yo vivo en Vigo")
+Sitemap style
+* **Cube** [Alejandro](http://www.yovivoenvigo.com/ "Yo vivo en Vigo")

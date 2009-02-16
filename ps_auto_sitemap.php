@@ -4,11 +4,9 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.0
+Version: 1.1.1
 Author URI: http://www.web-strategy.jp/
 */
-
-$ps_auto_sitemap =& new ps_auto_sitemap();
 
 class ps_auto_sitemap {
 
@@ -24,7 +22,8 @@ class ps_auto_sitemap {
 		'business' => 'Business',
 		'index' => 'Index',
 		'urban' => 'Urban',
-		'under_score' => 'Under score'
+		'under_score' => 'Under score',
+		'cube' => 'Cube'
 	);
 	
 	var $option;
@@ -64,13 +63,17 @@ class ps_auto_sitemap {
 
 	function replace_sitemap_content( $content ) {
 		global $post;
-		
 		if ( $this->option['post_id'] && $post->ID == $this->option['post_id'] ) {
-			if ( $cache_dir = $this->check_cache_dir() && file_exists( $cache_dir . '/site_map_cache.html' ) && $this->option['use_cache'] ) {
-				$sitemap_content = file_get_contents( $cache_dir . '/site_map_cache.html' );
-			} else {
-				$sitemap_content = $this->create_sitemap_content();
-			}		
+				if ( isset( $_GET['category'] ) && $category = get_category( (int)$_GET['category'] ) ) {
+					$sitemap_content = $this->make_category_sitemap( $category );
+				} else {
+					$cache_dir = $this->check_cache_dir();
+					if ( $cache_dir && file_exists( $cache_dir . '/site_map_cache.html' ) && $this->option['use_cache'] ) {
+						$sitemap_content = file_get_contents( $cache_dir . '/site_map_cache.html' );
+					} else {
+						$sitemap_content = $this->create_sitemap_content();
+					}
+				}
 			$content = preg_replace( '/(<p><!-- SITEMAP CONTENT REPLACE POINT --><\/p>|<!-- SITEMAP CONTENT REPLACE POINT -->)/', $sitemap_content, $content, 1 );
 		}
 		return $content;
@@ -162,10 +165,7 @@ class ps_auto_sitemap {
 
 		if ( ! is_array( $category_tree ) ) { return; }
 		
-		$ps_sitemap_query = new WP_query();
-		$ex_post_ids = preg_replace( '/[^\d,]/', '', $ex_post_ids );
-		$ex_post_ids = trim( $ex_post_ids, ',' );
-		$ex_post_ids = "'" . str_replace( ',', "','", $ex_post_ids ) . "'";
+		$ex_post_ids = $this->form_ids_for_sql();
 
 		if ( $child ) {
 			$post_list = "\n<ul>\n";
@@ -176,33 +176,12 @@ class ps_auto_sitemap {
 		foreach( $category_tree as $cat_id => $category ) {
 			$post_list .= '<li class="cat-item cat-item-' . $cat_id . '"><a href="' . get_category_link( $cat_id ). '" title="' . get_the_category_by_ID( $cat_id ) . '">' . wp_specialchars( get_the_category_by_ID( $cat_id ) ) . '</a>';
 
-			if ( ! $depth || $depth > $cur_depth ) {
-				$query = "
-SELECT	`posts`.`ID`,
-		`posts`.`post_title`
-FROM	$wpdb->posts as `posts`
-INNER JOIN	$wpdb->term_relationships as `relation`
-ON		( `posts`.`ID` = `relation`.`object_id` )
-INNER JOIN $wpdb->term_taxonomy as `taxonomy`
-ON		(`relation`.`term_taxonomy_id` = `taxonomy`.`term_taxonomy_id` )
-INNER JOIN $wpdb->terms as `terms`
-ON		( `taxonomy`.`term_id` = `terms`.`term_id` )
-WHERE	`posts`.`post_status` = 'publish'
-AND		`posts`.`post_type` = 'post'
-AND		`posts`.`ID` NOT IN ( $ex_post_ids )
-AND		`terms`.`term_id` = '$cat_id'
-GROUP BY	`posts`.`ID`
-ORDER BY	`posts`.`post_date` DESC";
-				$category_posts = $wpdb->get_results( $query, ARRAY_A );
-				if ( $category_posts ) {
-					$post_list .= "\n<ul>\n";
-					foreach( $category_posts as $post ) {
-						$post_list .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . attribute_escape( $post['post_title'] ) . '">' . wp_specialchars( $post['post_title'] ) . "</a></li>\n";
-					}
-					if ( ! count( $category ) ) {
-						$post_list .= "</ul>\n";
-					}
+			if ( !$this->option['disp_posts'] || $this->option['disp_posts'] == 'combine' ) {
+				if ( ! $depth || $depth > $cur_depth ) {
+					$post_list .= $category_posts = $this->make_posts_list_in_category( $ex_post_ids, $cat_id, count( $category ) );
 				}
+			} elseif( get_category( $cat_id )->count ) {
+				$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. attribute_escape( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . wp_specialchars( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
 			}
 			if ( count( $category ) && ( ! $depth || $depth > $cur_depth ) ) {
 				$post_list .= $this->make_post_list( $ex_post_ids, $category, $depth, $cur_depth + 1, ! $category_posts );
@@ -219,6 +198,41 @@ ORDER BY	`posts`.`post_date` DESC";
 	}
 
 
+	function make_posts_list_in_category( $ex_post_ids, $cat_id, $has_child ) {
+		global $wpdb;
+		
+		$post_list_in_category = '';
+
+		$query = "
+SELECT	`posts`.`ID`,
+		`posts`.`post_title`
+FROM	$wpdb->posts as `posts`
+INNER JOIN	$wpdb->term_relationships as `relation`
+ON		( `posts`.`ID` = `relation`.`object_id` )
+INNER JOIN $wpdb->term_taxonomy as `taxonomy`
+ON		(`relation`.`term_taxonomy_id` = `taxonomy`.`term_taxonomy_id` )
+INNER JOIN $wpdb->terms as `terms`
+ON		( `taxonomy`.`term_id` = `terms`.`term_id` )
+WHERE	`posts`.`post_status` = 'publish'
+AND		`posts`.`post_type` = 'post'
+AND		`posts`.`ID` NOT IN ( $ex_post_ids )
+AND		`terms`.`term_id` = '$cat_id'
+GROUP BY	`posts`.`ID`
+ORDER BY	`posts`.`post_date` DESC";
+		$category_posts = $wpdb->get_results( $query, ARRAY_A );
+		if ( $category_posts ) {
+			$post_list_in_category .= "\n<ul>\n";
+			foreach( $category_posts as $post ) {
+				$post_list_in_category .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . attribute_escape( $post['post_title'] ) . '">' . wp_specialchars( $post['post_title'] ) . "</a></li>\n";
+			}
+			if ( ! $has_child ) {
+				$post_list_in_category .= "</ul>\n";
+			}
+		}
+		return $post_list_in_category;
+	}
+
+
 	function add_sitemap_setting_menu() {
 		if ( function_exists( 'add_options_page' ) ) {
 			add_options_page( 'PS Sitemap output setting',
@@ -227,6 +241,31 @@ ORDER BY	`posts`.`post_date` DESC";
 				basename(__FILE__),
 				array( &$this, 'sitemap_setting') );
 		}
+	}
+
+
+	function make_category_sitemap( $category ) {
+		if ( ! $_GET['category'] || ! is_object( $category ) ) { return; }
+		
+		$ex_post_ids = $this->form_ids_for_sql();
+		
+		$sitemap_content = '<ul id="sitemap_list">' . "\n";
+		$sitemap_content .= '<li class="cat-item cat-item-' . $category->term_id . '"><a href="' . get_category_link( $category->term_id ). '" title="' . attribute_escape( $category->name ) . '">' . wp_specialchars( $category->name ) . '</a>';
+		$sitemap_content .= $this->make_posts_list_in_category( $ex_post_ids, (int)$_GET['category'], false );
+		$sitemap_content .= '</li>' . "\n";
+		$sitemap_content .= '</ul>' . "\n";
+		
+		return $sitemap_content;
+	}
+
+
+	function form_ids_for_sql() {
+		$ex_post_ids = preg_replace( '/[^\d,]/', '', $this->option['ex_post_ids'] );
+		$ex_post_ids = preg_replace( '/,+/', ',', $this->option['ex_post_ids'] );
+		$ex_post_ids = trim( $ex_post_ids, ',' );
+		$ex_post_ids = "'" . str_replace( ',', "','", $ex_post_ids ) . "'";
+		
+		return $ex_post_ids;
 	}
 
 
@@ -242,7 +281,7 @@ ORDER BY	`posts`.`post_date` DESC";
 
 		if( $_POST['_wpnonce'] ) {
 			check_admin_referer();
-			$sitemap_option_keys = array( 'home_list', 'post_tree', 'page_tree', 'post_id', 'disp_level',  'disp_first', 'ex_cat_ids', 'ex_post_ids', 'prepared_style', 'use_cache', 'suppress_link' );
+			$sitemap_option_keys = array( 'home_list', 'post_tree', 'page_tree', 'post_id', 'disp_level',  'disp_first','disp_posts', 'ex_cat_ids', 'ex_post_ids', 'prepared_style', 'use_cache', 'suppress_link' );
 			
 			foreach ( $sitemap_option_keys as $key ) {
 				switch ( $key ) {
@@ -274,6 +313,11 @@ ORDER BY	`posts`.`post_date` DESC";
 					break;
 				case 'disp_first' :
 					if ( ! in_array( $_POST['ps_sitemap_' . $key], array( 'post', 'page' ) ) ) {
+						wp_die( 'unvalid post data exist.' );
+					}
+					break;
+				case 'disp_posts' :
+					if ( ! in_array( $_POST['ps_sitemap_' . $key], array( 'combine', 'divide' ) ) ) {
 						wp_die( 'unvalid post data exist.' );
 					}
 					break;
@@ -368,6 +412,15 @@ ORDER BY	`posts`.`post_date` DESC";
 							<label for="ps_sitemap_disp_first_post"><?php _e( 'Post', 'ps_auto_sitemap' ); ?></label>
 							<input type="radio" name="ps_sitemap_disp_first" id="ps_sitemap_disp_first_page" value="page"<?php if ( $this->option['disp_first'] == 'page' ) : ?> checked="checked"<?php endif; ?> />
 							<label for="ps_sitemap_disp_first_page"><?php _e( 'Page', 'ps_auto_sitemap' ); ?></label>
+						</td>
+					</tr>
+					<tr>
+						<th><?php _e( 'Display of categories &amp; posts', 'ps_auto_sitemap' ); ?></th>
+						<td>
+							<input type="radio" name="ps_sitemap_disp_posts" id="ps_sitemap_disp_posts_combine" value="combine"<?php if ( !isset( $this->option['disp_posts'] ) || $this->option['disp_posts'] == 'combine' ) : ?> checked="checked"<?php endif; ?> />
+							<label for="ps_sitemap_disp_posts_combine"><?php _e( 'Combine', 'ps_auto_sitemap' ); ?></label>
+							<input type="radio" name="ps_sitemap_disp_posts" id="ps_sitemap_disp_posts_divide" value="divide"<?php if ( $this->option['disp_posts'] == 'divide' ) : ?> checked="checked"<?php endif; ?> />
+							<label for="ps_sitemap_disp_posts_divide"><?php _e( 'Divide', 'ps_auto_sitemap' ); ?></label>
 						</td>
 					</tr>
 					<tr>
@@ -476,6 +529,7 @@ ORDER BY	`posts`.`post_date` DESC";
 			'post_id' => '',
 			'disp_level' => '0',
 			'disp_first' => 'post',
+			'disp_posts' => 'combine',
 			'ex_cat_ids' => '',
 			'ex_post_id' => '',
 			'prepared_style' => '',
@@ -484,8 +538,8 @@ ORDER BY	`posts`.`post_date` DESC";
 
 		update_option( 'ps_sitemap', $option );
 	}
-	
-	
+
+
 	function check_cache_dir() {
 		$uploads = wp_upload_dir();
 
@@ -505,8 +559,8 @@ ORDER BY	`posts`.`post_date` DESC";
 		}
 		return false;
 	}
-	
-	
+
+
 	function delete_sitemap_cache() {
 		$uploads = wp_upload_dir();
 		if ( $uploads['error'] !== false ) { return false; }
@@ -516,12 +570,14 @@ ORDER BY	`posts`.`post_date` DESC";
 			unlink( $cache_file );
 		}
 	}
-	
-	
+
+
 	function check_htaccess( $cache_dir ) {
 		if ( file_exists( $cache_dir . '/.htaccess' ) ) { return; }
 		file_put_contents( $cache_dir . '/.htaccess', "order deny,allow\ndeny from all" );
 	}
-	
-	
+
+
 }
+
+$ps_auto_sitemap =& new ps_auto_sitemap();
