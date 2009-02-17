@@ -22,27 +22,24 @@ When you use WordPress as CMS of the Web site, you can expect the **effect of SE
 * Display/hide of pages.
 * Limitation of the depth of the list.
 * Set the display order of the page list and the post list.
-* new function : Combine/Divide category & post
+* Combine/Divide category & post
 * Set the excluded categories from the list.
 * Set the excluded posts and pages from the list.
 * Select the display style of the site map from 12 prepared designs (or no style).
 * Use or not caching sitemap content.
 
 = Latest change =
-* **1.1.1**
- * new function : Combine/Divide category & post
- * add 1 sitemap style.(created by Alejandro)
- * add spanish language file(created by Alejandro)
- * refactoring caching logic
+* **1.1.2**
+ * bug fix: syntax error has occurred in PHP4
  
- Change log
+[Change log]( http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/#change_log_en "Change log" )
 
 == Installation ==
 1. Unzip the downloaded package and upload into your WordPress plugins directory.
 If you use WordPress 2.7 or later, you can install from admin page.
 2. Go to plugins list and activate "PS Auto Sitemap".
 3. Post a page that will use as the sitemap page. 
-4. Insert following code in the content area. (Use HTML mode) 	`<!-- SITEMAP CONTENT REPLACE POINT -->`
+4. Insert following code in the content area. (Use HTML mode) `<!-- SITEMAP CONTENT REPLACE POINT -->`
 5. Define the sitemap's ID at "PostID of the sitemap" field of the setings.
 
 == Frequently Asked Questions ==
@@ -69,8 +66,8 @@ Or, if you tell us the theme and your selected style, we might help you.
 "[CMS service with WordPress](http://www.web-strategy.jp/ "CMS service with WordPress")" provides you service that uses WordPress as a CMS.
 
 == Special Thanks ==
-Translation:
-* **English** [dacelo](http://www.dacelo.info/blog/ "Translation")
-* **Spanish** [Alejandro](http://www.yovivoenvigo.com/ "Yo vivo en Vigo")
-Sitemap style
+= Translation: =
+* **English** [dacelo](http://www.dacelo.info/blog/ "Translation") 
+* **Spanish** [Alejandro](http://www.yovivoenvigo.com/ "Yo vivo en Vigo") 
+= Sitemap style: =
 * **Cube** [Alejandro](http://www.yovivoenvigo.com/ "Yo vivo en Vigo")

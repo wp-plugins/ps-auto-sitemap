@@ -4,7 +4,7 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.1
+Version: 1.1.2
 Author URI: http://www.web-strategy.jp/
 */
 
@@ -180,9 +180,13 @@ class ps_auto_sitemap {
 				if ( ! $depth || $depth > $cur_depth ) {
 					$post_list .= $category_posts = $this->make_posts_list_in_category( $ex_post_ids, $cat_id, count( $category ) );
 				}
-			} elseif( get_category( $cat_id )->count ) {
-				$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. attribute_escape( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . wp_specialchars( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
+			} else {
+				$cur_category = get_category( $cat_id );
+				if ( $cur_category->count ) {
+					$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. attribute_escape( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . wp_specialchars( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
+				}
 			}
+
 			if ( count( $category ) && ( ! $depth || $depth > $cur_depth ) ) {
 				$post_list .= $this->make_post_list( $ex_post_ids, $category, $depth, $cur_depth + 1, ! $category_posts );
 				if ( $category_posts ) {
