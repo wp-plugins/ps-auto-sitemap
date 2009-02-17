@@ -29,8 +29,8 @@ When you use WordPress as CMS of the Web site, you can expect the **effect of SE
 * Use or not caching sitemap content.
 
 = Latest change =
-* **1.1.2**
- * bug fix: syntax error has occurred in PHP4
+* **1.1.3**
+ * bug fix: Fatal error has occurred in PHP4
  
 [Change log]( http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/#change_log_en "Change log" )
 
