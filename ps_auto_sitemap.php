@@ -4,7 +4,7 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.2
+Version: 1.1.3
 Author URI: http://www.web-strategy.jp/
 */
 
@@ -121,7 +121,11 @@ class ps_auto_sitemap {
 		
 		if ( ( $cache_dir = $this->check_cache_dir() ) && $this->option['use_cache'] ) {
 			$this->check_htaccess( $cache_dir );
-			file_put_contents( $cache_dir . '/site_map_cache.html', $sitemap_content );
+			$handle = @fopen( $cache_dir . '/site_map_cache.html', 'w' );
+			if ( $handle ) {
+				fwrite( $handle, $sitemap_content );
+				fclose( $handle );
+			}
 		}
 		return $sitemap_content;
 	}
@@ -578,7 +582,11 @@ ORDER BY	`posts`.`post_date` DESC";
 
 	function check_htaccess( $cache_dir ) {
 		if ( file_exists( $cache_dir . '/.htaccess' ) ) { return; }
-		file_put_contents( $cache_dir . '/.htaccess', "order deny,allow\ndeny from all" );
+		$handle = @fopen( $cache_dir . '/.htaccess', 'w' );
+		if ( $handle ) {
+			fwrite( $handle, "order deny,allow\ndeny from all" );
+			fclose( $handle );
+		}
 	}
 
 
