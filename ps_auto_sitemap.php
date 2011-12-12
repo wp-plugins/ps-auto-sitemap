@@ -4,7 +4,7 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.3
+Version: 1.1.4
 Author URI: http://www.web-strategy.jp/
 */
 
@@ -100,7 +100,7 @@ class ps_auto_sitemap {
 		}
 		$sitemap_content = "<ul id=\"sitemap_list\" class=\"sitemap_disp_level_" . $this->option['disp_level'] . "\">\n";
 		if ($this->option['home_list'] ) {
-			$sitemap_content .= '<li class="home-item"><a href="' . get_bloginfo( 'url' ) . '" title="' . get_bloginfo( 'name' ) . '">' . wp_specialchars( get_bloginfo( 'name' ) ) . "</a></li>\n";
+			$sitemap_content .= '<li class="home-item"><a href="' . get_bloginfo( 'url' ) . '" title="' . get_bloginfo( 'name' ) . '">' . esc_html( get_bloginfo( 'name' ) ) . "</a></li>\n";
 		}
 		if ( $this->option['disp_first'] == 'post' ) {
 			$sitemap_content .= $post_list;
@@ -178,7 +178,7 @@ class ps_auto_sitemap {
 		}
 
 		foreach( $category_tree as $cat_id => $category ) {
-			$post_list .= '<li class="cat-item cat-item-' . $cat_id . '"><a href="' . get_category_link( $cat_id ). '" title="' . get_the_category_by_ID( $cat_id ) . '">' . wp_specialchars( get_the_category_by_ID( $cat_id ) ) . '</a>';
+			$post_list .= '<li class="cat-item cat-item-' . $cat_id . '"><a href="' . get_category_link( $cat_id ). '" title="' . get_the_category_by_ID( $cat_id ) . '">' . esc_html( get_the_category_by_ID( $cat_id ) ) . '</a>';
 
 			if ( !$this->option['disp_posts'] || $this->option['disp_posts'] == 'combine' ) {
 				if ( ! $depth || $depth > $cur_depth ) {
@@ -187,7 +187,7 @@ class ps_auto_sitemap {
 			} else {
 				$cur_category = get_category( $cat_id );
 				if ( $cur_category->count ) {
-					$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. attribute_escape( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . wp_specialchars( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
+					$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. esc_attr( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . esc_html( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
 				}
 			}
 
@@ -231,7 +231,7 @@ ORDER BY	`posts`.`post_date` DESC";
 		if ( $category_posts ) {
 			$post_list_in_category .= "\n<ul>\n";
 			foreach( $category_posts as $post ) {
-				$post_list_in_category .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . attribute_escape( $post['post_title'] ) . '">' . wp_specialchars( $post['post_title'] ) . "</a></li>\n";
+				$post_list_in_category .= "\t" . '<li class="post-item post-item-' . $post['ID'] . '"><a href="' . get_permalink( $post['ID'] ) . '" title="' . esc_attr( $post['post_title'] ) . '">' . esc_html( $post['post_title'] ) . "</a></li>\n";
 			}
 			if ( ! $has_child ) {
 				$post_list_in_category .= "</ul>\n";
@@ -242,13 +242,7 @@ ORDER BY	`posts`.`post_date` DESC";
 
 
 	function add_sitemap_setting_menu() {
-		if ( function_exists( 'add_options_page' ) ) {
-			add_options_page( 'PS Sitemap output setting',
-				'PS Auto Sitemap',
-				8,
-				basename(__FILE__),
-				array( &$this, 'sitemap_setting') );
-		}
+		add_options_page( 'PS Auto Sitemap setting', 'PS Auto Sitemap', 'manage_options', basename(__FILE__), array( &$this, 'sitemap_setting') );
 	}
 
 
@@ -258,7 +252,7 @@ ORDER BY	`posts`.`post_date` DESC";
 		$ex_post_ids = $this->form_ids_for_sql();
 		
 		$sitemap_content = '<ul id="sitemap_list">' . "\n";
-		$sitemap_content .= '<li class="cat-item cat-item-' . $category->term_id . '"><a href="' . get_category_link( $category->term_id ). '" title="' . attribute_escape( $category->name ) . '">' . wp_specialchars( $category->name ) . '</a>';
+		$sitemap_content .= '<li class="cat-item cat-item-' . $category->term_id . '"><a href="' . get_category_link( $category->term_id ). '" title="' . esc_attr( $category->name ) . '">' . esc_html( $category->name ) . '</a>';
 		$sitemap_content .= $this->make_posts_list_in_category( $ex_post_ids, (int)$_GET['category'], false );
 		$sitemap_content .= '</li>' . "\n";
 		$sitemap_content .= '</ul>' . "\n";
@@ -286,9 +280,10 @@ ORDER BY	`posts`.`post_date` DESC";
 		if ( file_exists( $lang_file ) ) {
 			load_textdomain( 'ps_auto_sitemap', $lang_file );
 		}
+		$ret = false;
 
-		if( $_POST['_wpnonce'] ) {
-			check_admin_referer();
+		if( isset( $_POST['_wpnonce'] ) && $_POST['_wpnonce'] ) {
+			check_admin_referer( 'ps_auto_sitemap' );
 			$sitemap_option_keys = array( 'home_list', 'post_tree', 'page_tree', 'post_id', 'disp_level',  'disp_first','disp_posts', 'ex_cat_ids', 'ex_post_ids', 'prepared_style', 'use_cache', 'suppress_link' );
 			
 			foreach ( $sitemap_option_keys as $key ) {
@@ -298,14 +293,14 @@ ORDER BY	`posts`.`post_date` DESC";
 				case 'page_tree' :
 				case 'use_cache' :
 				case 'suppress_link' :
-					if ( ! $_POST['ps_sitemap_' . $key] ) {
+					if ( ! isset( $_POST['ps_sitemap_' . $key] ) ) {
 						$_POST['ps_sitemap_' . $key] = '';
 					} else {
 						$this->validate_bool( $_POST['ps_sitemap_' . $key] );
 					}
 					break;
 				case 'post_id' :
-					if ( $_POST['ps_sitemap_' . $key] != '' ) {
+					if ( isset( $_POST['ps_sitemap_' . $key] ) && $_POST['ps_sitemap_' . $key] != '' ) {
 						if ( function_exists( 'mb_convert_kana' ) ) {
 							$_POST['ps_sitemap_' . $key] = mb_convert_kana( $_POST['ps_sitemap_' . $key], 'as', 'UTF-8' );
 						}
@@ -363,7 +358,7 @@ ORDER BY	`posts`.`post_date` DESC";
 			<div id="message" class="updated">
 				<p><?php _e('The settings of PS Auto Sitemap has changed successfully.', 'ps_auto_sitemap' );?></p>
 			</div>
-			<?php } elseif ( $_POST['ps_sitemap_submit'] && ! $ret ) { ?>
+			<?php } elseif ( isset( $_POST['ps_sitemap_submit'] ) && $_POST['ps_sitemap_submit'] && ! $ret ) { ?>
 			<div id="notice" class="error">
 				<p><?php _e('The settings has not been changed. There were no changes or failed to update the data base.', 'ps_auto_sitemap' );?></p>
 			</div>
@@ -375,7 +370,7 @@ ORDER BY	`posts`.`post_date` DESC";
 
 			<?php } ?>
 			<form method="post" action="">
-				<?php wp_nonce_field(); ?>
+				<?php wp_nonce_field( 'ps_auto_sitemap' ); ?>
 				<table class="form-table">
 					<tr>
 						<th><?php _e( 'Display home list', 'ps_auto_sitemap' ); ?></th>
@@ -483,7 +478,7 @@ ORDER BY	`posts`.`post_date` DESC";
 
 
 	function print_sitemap_admin_css() {
-		if( $_GET['page'] == 'ps_auto_sitemap.php' ) {
+		if( isset( $_GET['page'] ) && $_GET['page'] == 'ps_auto_sitemap.php' ) {
 			if ( defined( 'WP_PLUGIN_URL' ) ) {
 				echo '<link rel="stylesheet" href="' . WP_PLUGIN_URL . str_replace( str_replace( '\\', '/', WP_PLUGIN_DIR ), '', str_replace( '\\', '/', dirname( __file__ ) ) ) . '/css/ps_auto_sitemap_admin.css" type="text/css" media="all" />' . "\n";
 			} else {
@@ -593,3 +588,16 @@ ORDER BY	`posts`.`post_date` DESC";
 }
 
 $ps_auto_sitemap =& new ps_auto_sitemap();
+
+
+if ( ! function_exists( 'esc_attr' ) ) {
+function esc_attr( $text ) {
+	return attribute_escape( $text );
+}
+}
+
+if ( ! function_exists( 'esc_html' ) ) {
+function esc_html( $text ) {
+	return wp_specialchars( $text );
+}
+}

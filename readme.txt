@@ -2,8 +2,8 @@
 Contributors: jim912
 Tags: sitemap, post, page, seo, cms
 Requires at least: 2.3.1
-Tested up to: 2.7.1
-Stable tag: trunk
+Tested up to: 3.3
+Stable tag: 1.1.4
 
 Auto generator of a customizable and designed sitemap page.
 
@@ -29,6 +29,10 @@ When you use WordPress as CMS of the Web site, you can expect the **effect of SE
 * Use or not caching sitemap content.
 
 = Latest change =
+* **1.1.4**
+ * Compatible with WordPress 3.3
+ * bug fix: Notice error and Deprecated functions and arguments.
+
 * **1.1.3**
  * bug fix: Fatal error has occurred in PHP4
  
