@@ -3,7 +3,7 @@ Contributors: jim912
 Tags: sitemap, post, page, seo, cms
 Requires at least: 2.3.1
 Tested up to: 3.3
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 
 Auto generator of a customizable and designed sitemap page.
 
@@ -29,6 +29,9 @@ When you use WordPress as CMS of the Web site, you can expect the **effect of SE
 * Use or not caching sitemap content.
 
 = Latest change =
+* **1.1.5**
+ * bug fix: Notice error and Deprecated functions and arguments.
+
 * **1.1.4**
  * Compatible with WordPress 3.3
  * bug fix: Notice error and Deprecated functions and arguments.
@@ -36,7 +39,6 @@ When you use WordPress as CMS of the Web site, you can expect the **effect of SE
 * **1.1.3**
  * bug fix: Fatal error has occurred in PHP4
  
-[Change log]( http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/#change_log_en "Change log" )
 
 == Installation ==
 1. Unzip the downloaded package and upload into your WordPress plugins directory.
@@ -67,7 +69,7 @@ Or, if you tell us the theme and your selected style, we might help you.
 == Links ==
 "[PS Disable Auto Formatting](http://wordpress.org/extend/plugins/ps-disable-auto-formatting/ "WordPress editting support plugin")"Stops the automatic forming and the HTML tag removal in the html mode of WordPress, and generates a natural paragraph and changing line.
 
-"[CMS service with WordPress](http://www.web-strategy.jp/ "CMS service with WordPress")" provides you service that uses WordPress as a CMS.
+"[CMS service with WordPress](http://www.prime--strategy.co.jp/ "CMS service with WordPress")" provides you service that uses WordPress as a CMS.
 
 == Special Thanks ==
 = Translation: =

@@ -4,26 +4,26 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.4
+Version: 1.1.5
 Author URI: http://www.web-strategy.jp/
 */
 
 class ps_auto_sitemap {
 
 	var $sitemap_prepared_styles = array(
-		'simple' => 'Simple',
-		'simple2' => 'Simple2',
-		'checker' => 'Checker',
-		'marker' => 'Fluorescent marker',
-		'document' => 'Document tree',
-		'label' => 'Label',
-		'music' => 'Music',
-		'arrows' => 'Arrows',
-		'business' => 'Business',
-		'index' => 'Index',
-		'urban' => 'Urban',
-		'under_score' => 'Under score',
-		'cube' => 'Cube'
+		'simple'		=> 'Simple',
+		'simple2'		=> 'Simple2',
+		'checker'		=> 'Checker',
+		'marker'		=> 'Fluorescent marker',
+		'document'		=> 'Document tree',
+		'label'			=> 'Label',
+		'music'			=> 'Music',
+		'arrows'		=> 'Arrows',
+		'business'		=> 'Business',
+		'index'			=> 'Index',
+		'urban'			=> 'Urban',
+		'under_score'	=> 'Under score',
+		'cube'			=> 'Cube'
 	);
 	
 	var $option;
@@ -38,16 +38,16 @@ class ps_auto_sitemap {
 		global $wp_version;
 		$this->wp_version = $wp_version;
 		
-		add_action( 'init', array( &$this, 'ps_auto_sitemap_init') );
-		add_action( 'publish_post', array( &$this, 'delete_sitemap_cache') );
-		add_action( 'publish_page', array( &$this, 'delete_sitemap_cache') );
-		add_filter( 'the_content', array( &$this, 'replace_sitemap_content') );
-		add_action( 'admin_menu', array( &$this, 'add_sitemap_setting_menu') );
-		add_action( 'wp_head', array( &$this, 'print_sitemap_prepare_css' ) );
+		add_action( 'init'			, array( &$this, 'ps_auto_sitemap_init') );
+		add_action( 'publish_post'	, array( &$this, 'delete_sitemap_cache') );
+		add_action( 'publish_page'	, array( &$this, 'delete_sitemap_cache') );
+		add_filter( 'the_content'	, array( &$this, 'replace_sitemap_content') );
+		add_action( 'admin_menu'	, array( &$this, 'add_sitemap_setting_menu') );
+		add_action( 'wp_head'		, array( &$this, 'print_sitemap_prepare_css' ) );
 		if ( version_compare( $wp_version, '2.6', '>=' ) ) {
-			add_action( 'admin_print_styles', array( &$this, 'print_sitemap_admin_css' ) );
+			add_action( 'admin_print_styles'	, array( &$this, 'print_sitemap_admin_css' ) );
 		} else {
-			add_action( 'admin_head', array( &$this, 'print_sitemap_admin_css' ) );
+			add_action( 'admin_head'			, array( &$this, 'print_sitemap_admin_css' ) );
 		}
 	}
 	
@@ -187,7 +187,7 @@ class ps_auto_sitemap {
 			} else {
 				$cur_category = get_category( $cat_id );
 				if ( $cur_category->count ) {
-					$post_list .= '<span class="posts_in_category"><a href="' . clean_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. esc_attr( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . esc_html( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
+					$post_list .= '<span class="posts_in_category"><a href="' . esc_url( add_query_arg( array( 'category' => $cat_id ), $_SERVER['REQUEST_URI'] ) ) . '"title="'. esc_attr( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) .'">' . esc_html( __( 'Show posts in this category.', 'ps_auto_sitemap' ) ) . '</a></span>' . "\n";
 				}
 			}
 
@@ -471,7 +471,7 @@ ORDER BY	`posts`.`post_date` DESC";
 					<li><?php _e( 'Define the sitemap\'s ID at "<strong>PostID of the sitemap</strong>" field of the setings.', 'ps_auto_sitemap' ); ?></li>
 				</ol>
 			</div>
-			<div id="ps_sitemap_author">This plugin developed by <a href="http://www.web-strategy.jp/">Prime Strategy Co.,LTD.</a></div>
+			<div id="ps_sitemap_author">This plugin developed by <a href="http://www.prime--strategy.co.jp/">Prime Strategy Co.,LTD.</a></div>
 		</div>
 		<?php
 	}
@@ -526,19 +526,19 @@ ORDER BY	`posts`.`post_date` DESC";
 
 	function set_default_options() {
 		$option = array(
-			'home_list' => '1',
-			'post_tree' => '1',
-			'page_tree' => '1',
-			'post_id' => '',
-			'disp_level' => '0',
-			'disp_first' => 'post',
-			'disp_posts' => 'combine',
-			'ex_cat_ids' => '',
-			'ex_post_id' => '',
-			'prepared_style' => '',
-			'use_cache' => '1',
-			'suppress_link' => '' );
-
+			'home_list'			=> '1',
+			'post_tree'			=> '1',
+			'page_tree'			=> '1',
+			'post_id'			=> '',
+			'disp_level'		=> '0',
+			'disp_first'		=> 'post',
+			'disp_posts'		=> 'combine',
+			'ex_cat_ids'		=> '',
+			'ex_post_ids'		=> '',
+			'prepared_style'	=> '',
+			'use_cache' =>		'1',
+			'suppress_link'		=> ''
+		);
 		update_option( 'ps_sitemap', $option );
 	}
 
@@ -599,5 +599,11 @@ function esc_attr( $text ) {
 if ( ! function_exists( 'esc_html' ) ) {
 function esc_html( $text ) {
 	return wp_specialchars( $text );
+}
+}
+
+if ( ! function_exists( 'esc_url' ) ) {
+function esc_url( $url, $protocols = null, $_context = 'display' ) {
+	return clean_url( $url, $protocols, $context );
 }
 }
