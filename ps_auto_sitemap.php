@@ -4,7 +4,7 @@ Plugin Name: PS Auto Sitemap
 Plugin URI: http://www.web-strategy.jp/wp_plugin/ps_auto_sitemap/
 Description: Auto generator of a customizable and designed sitemap page.
 Author: Hitoshi Omagari
-Version: 1.1.8
+Version: 1.1.9
 Author URI: http://www.warna.info/
 */
 
@@ -29,25 +29,20 @@ class ps_auto_sitemap {
 	var $option;
 
 
-	function ps_auto_sitemap() {
-		$this->__construct();
-	}
-
-
 	function __construct() {
 		global $wp_version;
 		$this->wp_version = $wp_version;
 		
-		add_action( 'init'			, array( &$this, 'ps_auto_sitemap_init') );
-		add_action( 'publish_post'	, array( &$this, 'delete_sitemap_cache') );
-		add_action( 'publish_page'	, array( &$this, 'delete_sitemap_cache') );
-		add_filter( 'the_content'	, array( &$this, 'replace_sitemap_content') );
-		add_action( 'admin_menu'	, array( &$this, 'add_sitemap_setting_menu') );
-		add_action( 'wp_head'		, array( &$this, 'print_sitemap_prepare_css' ) );
+		add_action( 'init'        , array( $this, 'ps_auto_sitemap_init') );
+		add_action( 'publish_post', array( $this, 'delete_sitemap_cache') );
+		add_action( 'publish_page', array( $this, 'delete_sitemap_cache') );
+		add_filter( 'the_content' , array( $this, 'replace_sitemap_content') );
+		add_action( 'admin_menu'  , array( $this, 'add_sitemap_setting_menu') );
+		add_action( 'wp_head'     , array( $this, 'print_sitemap_prepare_css' ) );
 		if ( version_compare( $wp_version, '2.6', '>=' ) ) {
-			add_action( 'admin_print_styles'	, array( &$this, 'print_sitemap_admin_css' ) );
+			add_action( 'admin_print_styles', array( $this, 'print_sitemap_admin_css' ) );
 		} else {
-			add_action( 'admin_head'			, array( &$this, 'print_sitemap_admin_css' ) );
+			add_action( 'admin_head'        , array( $this, 'print_sitemap_admin_css' ) );
 		}
 	}
 	
@@ -115,9 +110,6 @@ class ps_auto_sitemap {
 		}
 		
 		$sitemap_content .= "</ul>\n";
-		if ( ! $this->option['suppress_link'] ) {
-			$sitemap_content .= '<address style="text-align: right; font-size: x-small;">Powered by <a href="http://www.web-strategy.jp/" target="_blank">Prime Strategy Co.,LTD.</a></address>' . "\n";
-		}
 		
 		if ( ( $cache_dir = $this->check_cache_dir() ) && $this->option['use_cache'] ) {
 			$this->check_htaccess( $cache_dir );
@@ -242,7 +234,7 @@ ORDER BY	`posts`.`post_date` DESC";
 
 
 	function add_sitemap_setting_menu() {
-		add_options_page( 'PS Auto Sitemap setting', 'PS Auto Sitemap', 'manage_options', basename(__FILE__), array( &$this, 'sitemap_setting') );
+		add_options_page( 'PS Auto Sitemap setting', 'PS Auto Sitemap', 'manage_options', basename(__FILE__), array( $this, 'sitemap_setting') );
 	}
 
 
@@ -453,11 +445,8 @@ ORDER BY	`posts`.`post_date` DESC";
 						<th><?php _e( 'Using cache', 'ps_auto_sitemap' ); ?></th>
 						<td><input type="checkbox" name="ps_sitemap_use_cache" id="ps_sitemap_use_cache" value="1"<?php if ( $this->option['use_cache'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_use_cache"><?php _e( 'use', 'ps_auto_sitemap' ); ?></label></td>
 					</tr>
-					<tr>
-						<th><?php _e( 'Hide developper link', 'ps_auto_sitemap' ); ?></th>
-						<td><input type="checkbox" name="ps_sitemap_suppress_link" id="ps_sitemap_suppress_link" value="1"<?php if ( $this->option['suppress_link'] == '1' ) : ?> checked="checked"<?php endif; ?> /> <label for="ps_sitemap_suppress_link"><?php _e( 'Hide', 'ps_auto_sitemap' ); ?></label></td>
-					</tr>
 				</table>
+				<input type="hidden" name="ps_sitemap_suppress_link" id="ps_sitemap_suppress_link" value="1"/>
 				<div class="ps_sitemap_submit_buttons">
 					<input type="submit" name="ps_sitemap_submit" class="button-primary" value="<?php _e( 'Save Changes' ); ?>" />
 				</div>
